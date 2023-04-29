@@ -61,11 +61,6 @@ CREATE TABLE aplicacao (
 );
 
 
-
-
-
-
-
 INSERT INTO fabricante (nome_fabricante)
 	values ('P-fizer'), ('Oxford'), ('Butantan'), ('Janssen');
 
