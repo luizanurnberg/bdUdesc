@@ -1,143 +1,144 @@
 -- A. Nome da Categoria
-select c.name from category as c
+SELECT ct.name FROM category AS ct;
 
 -- B. Nome do filme
-select f.title from film as f
+SELECT fm.title FROM film AS fm;
 
 -- C. Nome do idiomas
-select l.name from language as l
+SELECT la.name FROM language AS la;
 
 -- D. Nome do ator
-select a.first_name, a.last_name from actor as a
+SELECT ac.first_name, ac.last_name FROM actor AS ac;
 
 -- E. Nome do Filme | Categoria (ordenado pelo nome do filme)
-select f.title, c.name from film as f
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by f.title
+SELECT fm.title, ct.name FROM film AS fm
+	INNER JOIN film_category AS fmct
+	ON fm.film_id = fmct.film_id
+		INNER JOIN category AS ct
+		ON fmct.category_id = ct.category_id
+		ORDER BY fm.title;
 		 
 -- F. Categoria | Nome do Filme (ordenado pela categoria)
-select c.name, f.title from film as f
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by c.name
+SELECT ct.name, fm.title FROM film AS fm
+	INNER JOIN film_category AS fmct
+	ON fm.film_id = fmct.film_id
+		INNER JOIN category AS ct
+		ON fmct.category_id = ct.category_id
+		ORDER BY ct.name;
 		 
 -- G. Nome do Filme | Idioma (ordenado pelo nome do filme)
-select f.title, l.name from film as f
-	join language as l
-		on f.language_id = l.language_id
-		order by f.title
+SELECT fm.title, la.name FROM film AS fm
+	INNER JOIN language AS la
+	ON fm.language_id = la.language_id
+	ORDER BY fm.title;
 		
 -- H. Idioma | Nome do Filme (ordenado pelo idioma)
-select l.name, f.title from film as f
-	join language as l
-		on f.language_id = l.language_id
-		order by l.name
-		
+SELECT la.name, fm.title FROM film AS fm
+	INNER JOIN language AS la
+	ON fm.language_id = la.language_id
+	ORDER BY la.name;
+
+
 -- I. Categoria | Nome do Filme | Idioma (ordenado pela categoria)
-select c.name, f.title, l.name from film as f
-	join language as l
-		on f.language_id = l.language_id
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by c.name
+SELECT ct.name, fm.title, la.name FROM film AS fm
+	INNER JOIN language AS la
+	ON fm.language_id = la.language_id
+		INNER JOIN film_category AS fmct
+		ON fm.film_id = fmct.film_id
+			INNER JOIN category AS ct
+			ON fmct.category_id = ct.category_id
+			ORDER BY ct.name;
 	
 -- J. Nome do Filme | Categoria | Idioma (ordenado pelo nome do filme)
-select f.title, c.name, l.name from film as f
-	join language as l
-		on f.language_id = l.language_id
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by f.title
+SELECT fm.title, ct.name, la.name FROM film AS fm
+	INNER JOIN language AS la
+	ON fm.language_id = la.language_id
+		INNER JOIN film_category AS fmct
+		ON fm.film_id = fmct.film_id
+			INNER JOIN category AS ct
+			ON fmct.category_id = ct.category_id
+			ORDER BY fm.title;
 		 
 -- K. Idioma | Nome do Filme | Categoria (ordenado pelo idioma)
-select l.name, f.title, c.name from film as f
-	join language as l
-		on f.language_id = l.language_id
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by l.name
+SELECT la.name, fm.title, ct.name FROM film AS fm
+	INNER JOIN language AS la
+	ON fm.language_id = la.language_id
+		INNER JOIN film_category AS fmct
+		ON fm.film_id = fmct.film_id
+			INNER JOIN category AS ct
+			ON fmct.category_id = ct.category_id
+			ORDER BY la.name;
 		 
 -- L. Nome do Ator | Nome do Filme (ordenado pelo nome do ator)
-select ac.first_name, ac.last_name, f.title from film as f
-	join film_actor as fa
-		on fa.film_id = f.film_id
-	join actor as ac
-		on fa.actor_id = ac.actor_id
-		order by ac.first_name
+SELECT ac.first_name, ac.last_name, fm.title FROM film AS fm
+	INNER JOIN film_actor AS fmac
+	ON fm.film_id = fmac.film_id
+		INNER JOIN actor AS ac
+		ON fmac.actor_id = ac.actor_id
+		ORDER BY ac.first_name;
 
 -- M. Nome do Filme | Nome do Ator (ordenado pelo nome do filme)
-select f.title, ac.first_name, ac.last_name from film as f
-	join film_actor as fa
-		on fa.film_id = f.film_id
-	join actor as ac
-		on fa.actor_id = ac.actor_id
-		order by f.title
+SELECT fm.title, ac.first_name, ac.last_name FROM film AS fm
+	INNER JOIN film_actor AS fmac
+	ON fm.film_id = fmac.film_id
+		INNER JOIN actor AS ac
+		ON fmac.actor_id = ac.actor_id
+		ORDER BY fm.title;
 
 -- N. Categoria | Nome do Filme | Ator (ordenado pela categoria)
-select c.name, f.title, ac.first_name, ac.last_name from film as f
-	join film_actor as fa
-		on fa.film_id = f.film_id
-	join actor as ac
-		on fa.actor_id = ac.actor_id
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by c.name
-		 
+SELECT ct.name, fm.title, ac.first_name, ac.last_name FROM film AS fm
+		INNER JOIN film_category AS fmct
+		ON fm.film_id = fmct.film_id
+			INNER JOIN category AS ct
+			ON fmct.category_id = ct.category_id
+				INNER JOIN film_actor AS fmac
+				ON fm.film_id = fmac.film_id
+					INNER JOIN actor AS ac
+					ON fmac.actor_id = ac.actor_id
+					ORDER BY ct.name;
+			
 -- O. Ator | Categoria (ordenado pelo autor)
-select ac.first_name, ac.last_name, c.name from film as f
-	join film_actor as fa
-		on fa.film_id = f.film_id
-	join actor as ac
-		on fa.actor_id = ac.actor_id
-	join film_category as fc
-		on f.film_id = fc.film_id
-	join category as c
-		on fc.category_id = c.category_id
-		 order by ac.first_name
+SELECT ac.first_name, ac.last_name, ct.name FROM film AS fm
+	INNER JOIN film_category AS fmct
+	ON fm.film_id = fmct.film_id
+		INNER JOIN category AS ct
+		ON fmct.category_id = ct.category_id
+			INNER JOIN film_actor AS fmac
+			ON fm.film_id = fmac.film_id
+				INNER JOIN actor AS ac
+				ON fmac.actor_id = ac.actor_id
+				ORDER BY ct.name;
 
 -- P. Nome da Cidade | Nome do País (ordenado pelo nome da cidade)
-select c.city, p.country from country as p
-	join city as c 
-		on p.country_id = c.country_id
-		order by c.city
+SELECT cty.city, ctry.country FROM country AS ctry
+	INNER JOIN city AS cty
+	ON cty.country_id = ctry.country_id
+	ORDER BY cty.city;
 		
 -- Q. Nome do País | Nome da Cidade (ordenado pelo nome do país)
-select p.country, c.city from country as p
-	join city as c 
-		on p.country_id = c.country_id
-		order by p.country
+SELECT ctry.country, cty.city FROM country AS ctry
+	INNER JOIN city AS cty
+	ON cty.country_id = ctry.country_id
+	ORDER BY cty.city;
 
 -- R. Os idiomas que não tem filmes
-select l.name from language as l
-	left join film as f
-			on f.language_id = l.language_id
-			 where f.title is null
-		 
+SELECT la.name FROM language AS la
+	LEFT JOIN film AS fm
+	ON la.language_id = fm.language_id
+	WHERE fm.title is null;
+	
 -- S. Os atores que não tem filme em estoque
-select ac.first_name, ac.last_name, f.title from film as f
-	join film_actor as fa
-		on fa.film_id = f.film_id
-	join actor as ac
-		on fa.actor_id = ac.actor_id
-	left join inventory as inv
-		on f.film_id = inv.film_id
-		where inv.film_id is null
+SELECT ac.first_name, ac.last_name, f.title FROM film AS f
+	INNER JOIN film_actor AS fa
+	ON fa.film_id = f.film_id
+		INNER JOIN actor AS ac
+		ON fa.actor_id = ac.actor_id
+			LEFT JOIN inventory AS inv
+			ON f.film_id = inv.film_id
+			WHERE inv.film_id is null;
 	
 -- T. As categorias que não tem filmes
-select c.name from category as c
-	inner join film_category as fc
-		on c.category_id = fc.category_id
-		 where fc.film_id is null
+SELECT c.name FROM category AS c
+	INNER JOIN film_category AS fc
+		ON c.category_id = fc.category_id
+		 WHERE fc.film_id IS null;
