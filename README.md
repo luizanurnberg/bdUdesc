@@ -52,4 +52,5 @@ podendo ter qualquer tamanho e complexidade, podendo ser mantido e criado de for
 12. Any;
 13. Some;
 14. All;
-15. Having.
+15. Having;
+16. View.
