@@ -17,7 +17,8 @@ VALUES
 -- ('Basil Haney','Ap #200-562 Nec, St.'),
 -- ('Barclay Ramsey','181-8758 Consectetuer Rd.'),
 -- ('Cruz Yang','487-7590 At Road'),
-('teste fornecedor sem produto', 'udesc');
+-- ('teste fornecedor sem produto', 'udesc'),
+('teste pessoa !cliente && !fornecedor', 'rio rafael');
 
 CREATE TABLE cliente (
 id_cliente INT NOT NULL,
@@ -34,7 +35,8 @@ VALUES
 -- (4, '08405369090'),
 -- (5, '61441956026'),
 -- (6, '14152284935'),
-(7, null);
+-- (7, null),
+(8, '00000000000');
 
 CREATE TABLE fornecedor (
 id_fornecedor INT NOT NULL,
@@ -75,7 +77,8 @@ VALUES
 -- (9, 'Creme Dental Sorrizin', 80.60),
 -- (10, 'Frango Bovino', 15.50),
 -- (10, 'Coleira Segura Pe�o', 17.20),
-(7, 'Guitarra', 18.000);
+-- (7, 'Guitarra', 18.000),
+(7, 'Bateria', 10.000);
 
 
 CREATE TABLE venda (
@@ -113,194 +116,210 @@ FOREIGN KEY (id_produto) REFERENCES produto (id_produto),
 FOREIGN KEY (id_venda) REFERENCES venda (id_venda)
 );
 
+
 INSERT INTO item_estoque (id_produto, id_venda)
 VALUES
--- (1, 1),
--- (1, 1),
--- (1, 1),
--- (1, 1),
--- (1, 1),
--- (2, 2),
--- (2, 2),
--- (2, 2),
--- (2, 2),
--- (2, 2),
--- (3, 3),
--- (3, 3),
--- (3, 3),
--- (3, 3),
--- (3, 3),
--- (4, 4),
--- (4, 4),
--- (4, 4),
--- (4, 4),
--- (4, 4),
--- (5, 5),
--- (5, 5),
--- (5, 5),
--- (5, 5),
--- (5, 5),
--- (6, 6),
--- (6, 6),
--- (6, 6),
--- (6, 6),
--- (6, 6),
--- (7, 7),
--- (7, 7),
--- (7, 7),
--- (7, 7),
--- (7, 7),
--- (8, 8),
--- (8, 8),
--- (8, 8),
--- (8, 8),
--- (8, 8),
--- (9, 9),
--- (9, 9),
--- (9, 9),
--- (9, 9),
--- (9, 9);
+(1, 1),
+(1, 1),
+(1, 1),
+(1, 1),
+(1, 1),
+(2, 2),
+(2, 2),
+(2, 2),
+(2, 2),
+(2, 2),
+(3, 3),
+(3, 3),
+(3, 3),
+(3, 3),
+(3, 3),
+(4, 4),
+(4, 4),
+(4, 4),
+(4, 4),
+(4, 4),
+(5, 5),
+(5, 5),
+(5, 5),
+(5, 5),
+(5, 5),
+(6, 6),
+(6, 6),
+(6, 6),
+(6, 6),
+(6, 6),
+(7, 7),
+(7, 7),
+(7, 7),
+(7, 7),
+(7, 7),
+(8, 8),
+(8, 8),
+(8, 8),
+(8, 8),
+(8, 8),
+(9, 9),
+(9, 9),
+(9, 9),
+(9, 9),
+(9, 9),
 (12, null);
 
+
 --   a. O nome das pessoas que são clientes e são fornecedores 
-SELECT nome
-FROM pessoa 
+SELECT pe.nome FROM pessoa AS pe
 WHERE id_pessoa IN(
-	SELECT id_pessoa 
-	FROM cliente
-		WHERE id_pessoa IN (
-			SELECT id_pessoa 
-			FROM fornecedor
+	SELECT id_pessoa FROM cliente
+		WHERE id_pessoa IN(
+			SELECT id_pessoa FROM fornecedor
 		)
 );
+
 --   b. Os produtos que não estão em estoque
-SELECT nome 
-FROM produto 
+SELECT id_produto FROM produto 
 WHERE id_produto NOT IN(
-	SELECT id_produto
-	FROM item_estoque
+	SELECT id_produto FROM item_estoque
 );
 --   c. Os produtos que estão em estoque mas nunca foram vendidos
-SELECT id_produto 
-FROM item_estoque 
-WHERE id_venda is null
+SELECT id_produto FROM item_estoque AS ie
+WHERE NOT EXISTS(
+	SELECT 1
+	FROM venda AS ve
+	WHERE ie.id_venda = ve.id_venda
+);
 
 --   d. As vendas sem produtos
-SELECT *
-FROM venda as ve
-WHERE NOT EXISTS (
-	SELECT 1
-	FROM item_estoque as ie
-	WHERE ie.id_venda = v.id_venda
-);
+SELECT * FROM venda AS ve
+	WHERE NOT EXISTS(
+		SELECT 1 
+		FROM item_estoque AS ie
+		WHERE ie.id_venda = ve.id_venda
+	);
+	
 --   e. Os clientes que nunca compraram
-SELECT *
-FROM cliente as cl
-WHERE NOT EXISTS (
-	SELECT 1
-	FROM venda as v
-	WHERE v.id_cliente = cl.id_cliente
-);
+SELECT * FROM cliente AS cl
+	WHERE NOT EXISTS(
+		SELECT 1
+		FROM venda AS ve
+		WHERE ve.id_cliente = cl.id_cliente
+	);
+
 --   f. As pessoas que não são clientes
-SELECT * 
-FROM pessoa as pe
-WHERE NOT EXISTS (
-	SELECT 1
-	FROM cliente as cl
+SELECT nome FROM pessoa AS pe
+WHERE NOT EXISTS(
+	SELECT 1 
+	FROM cliente AS cl
 	WHERE pe.id_pessoa = cl.id_cliente
 );
+
 --   g. As pessoas que não são fornecedores
-SELECT * 
-FROM pessoa as pe
-WHERE NOT EXISTS (
-	SELECT 1
-	FROM fornecedor as fo
+SELECT nome FROM pessoa AS pe
+WHERE NOT EXISTS(
+	SELECT 1 
+	FROM fornecedor AS fo
 	WHERE pe.id_pessoa = fo.id_fornecedor
 );
 --   h. As pessoas que não são clientes, nem fornecedores
-SELECT * 
-FROM pessoa as pe
-WHERE NOT EXISTS (
-	SELECT 1
-	FROM fornecedor as fo
-	WHERE pe.id_pessoa = fo.id_fornecedor
-	AND NOT EXISTS (
-	SELECT 1
-	FROM cliente as cl
-	WHERE pe.id_pessoa = cl.id_cliente
-));
---   i. Os fornecedores que não tem produto
-SELECT * 
-FROM fornecedor as fo
+SELECT nome FROM pessoa AS pe 
 WHERE NOT EXISTS(
 	SELECT 1 
-	FROM produto as pr
-	WHERE pr.id_fornecedor = fo.id_fornecedor
-);
---   j. Os nome dos clientes que nunca realizaram uma compra
-SELECT * 
-FROM cliente as cl
-WHERE NOT EXISTS (
-	SELECT 1
-	FROM venda as ve
-	WHERE cl.id_cliente = ve.id_cliente
-);
---   k. Liste o nome e o endereço dos fornecedores que não possuem nenhum produto cadastrado na tabela produto
-SELECT * 
-FROM pessoa as pe
-WHERE EXISTS(
-	SELECT 1
-	FROM fornecedor as fo
+	FROM fornecedor AS fo
 	WHERE pe.id_pessoa = fo.id_fornecedor
 	AND NOT EXISTS(
 		SELECT 1 
-		FROM produto as pr
-		WHERE pr.id_fornecedor = fo.id_fornecedor
+		FROM cliente AS cl
+		WHERE pe.id_pessoa = cl.id_cliente
+	)
+);
+--   i. Os fornecedores que não tem produto
+SELECT nome FROM pessoa AS pe
+WHERE EXISTS(
+	SELECT 1 
+	FROM fornecedor AS fo
+	WHERE pe.id_pessoa = fo.id_fornecedor
+	AND NOT EXISTS (
+		SELECT 1 
+		FROM produto AS pr 
+		WHERE fo.id_fornecedor = pr.id_fornecedor
+	)
+);
+--   j. Os nome dos clientes que nunca realizaram uma compra
+SELECT pe.nome FROM pessoa AS pe 
+WHERE EXISTS(
+	SELECT 1 
+	FROM cliente AS cl
+	WHERE pe.id_pessoa = cl.id_cliente
+	AND NOT EXISTS(
+		SELECT 1 
+		FROM venda AS ve
+		WHERE cl.id_cliente = ve.id_cliente
+	)
+);
+--   k. Liste o nome e o endereço dos fornecedores que não possuem nenhum produto cadastrado na tabela produto
+SELECT pe.nome, pe.endereco FROM pessoa AS pe
+WHERE EXISTS(
+	SELECT 1 
+	FROM fornecedor AS fo
+	WHERE pe.id_pessoa = fo.id_fornecedor
+	AND NOT EXISTS(
+		SELECT 1 
+		FROM produto AS pr
+		WHERE fo.id_fornecedor = pr.id_fornecedor 
 	)
 );
 --   l. Liste os clientes que não possuem CPF cadastrado na tabela cliente.
-SELECT *
-FROM cliente as cl
-WHERE cl.cpf is null
+SELECT pe.nome FROM pessoa AS pe
+WHERE EXISTS(
+	SELECT 1
+	FROM cliente AS cl
+	WHERE pe.id_pessoa = cl.id_cliente
+	AND cl.cpf IS NULL
+);
 
 --   m. Liste os clientes que fizeram alguma compra e que possuem CPF cadastrado na tabela cliente.
-SELECT *
-FROM cliente as cl
-WHERE EXISTS (
+SELECT pe.nome FROM pessoa AS pe
+WHERE EXISTS(
 	SELECT 1
-	FROM venda as ve
-	WHERE ve.id_cliente = cl.id_cliente
-	AND cl.cpf IS NOT null
+	FROM cliente AS cl
+	WHERE pe.id_pessoa = cl.id_cliente
+	AND cl.cpf IS NOT NULL
+	AND EXISTS (
+		SELECT 1 
+		FROM venda AS ve
+		WHERE cl.id_cliente = ve.id_cliente
+	)
 );
 --   n. Liste o nome dos produtos e sua quantidade em estoque
-SELECT pr.nome, COUNT (*) as quantidade_estoque
-FROM produto as pr
-JOIN item_estoque ie 
-ON pr.id_produto = ie.id_produto
-GROUP BY pr.nome;
+SELECT pr.nome, COUNT(*) AS quantidade_estoque FROM produto AS pr
+	INNER JOIN item_estoque AS ie
+	ON pr.id_produto = ie.id_produto
+	GROUP BY pr.nome
+	ORDER BY pr.nome;
+	
 --   o. Liste o nome dos produtos e sua quantidade em estoque, dos produtos que tenham a maior quantidade. Ou seja, que seu estoque seja igual ao máximo (sem utilizar Limit)
-SELECT pr.nome, COUNT(*) as quantidade_estoque
-FROM produto pr
-JOIN item_estoque ie ON pr.id_produto = ie.id_produto
-GROUP BY pr.nome
-HAVING COUNT(*) = (
-    SELECT MAX(qe)
-    FROM (
-        SELECT COUNT(*) as qe
-        FROM produto pr
-        JOIN item_estoque ie ON pr.id_produto = ie.id_produto
-        GROUP BY pr.nome
-    ) subquery_alias
-);
+SELECT pr.nome, COUNT(*) AS quantidade_estoque FROM produto AS pr
+	INNER JOIN item_estoque AS ie
+	ON pr.id_produto = ie.id_produto
+	GROUP BY pr.nome
+	HAVING COUNT(*) = (
+		SELECT MAX(qe) FROM(
+			SELECT COUNT(*) AS qe FROM produto AS pr
+			INNER JOIN item_estoque AS ie
+			ON pr.id_produto = ie.id_produto
+			GROUP BY pr.nome
+		)subquery_alias
+	)
+	
 --   p. Liste o nome dos produtos e o valor total vendido, dos produtos que tenham a maior quantidade. Ou seja, que seu estoque seja igual ao máximo (sem utilizar Limit)
-SELECT pr.nome, COUNT(*) as quantidade_estoque, SUM(pr.preco) as valor_total
+SELECT pr.nome, COUNT(*) as quantidade_estoque, SUM(pr.preco) AS valor_total
 FROM produto pr
 JOIN item_estoque ie ON pr.id_produto = ie.id_produto
 GROUP BY pr.nome
 HAVING COUNT(*) = (
     SELECT MAX(qe)
     FROM (
-        SELECT COUNT(*) as qe
+        SELECT COUNT(*) AS qe
         FROM produto pr
         JOIN item_estoque ie ON pr.id_produto = ie.id_produto
         GROUP BY pr.nome
