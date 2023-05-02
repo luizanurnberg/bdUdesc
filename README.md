@@ -36,7 +36,16 @@ podendo ter qualquer tamanho e complexidade, podendo ser mantido e criado de for
 
         SELECT nome FROM tbpessoa -> primeiro é feita a seleção de "tbpessoa" e depois a projeção de "nome"
         WHERE id = 1 -> isso indica que temos um filtro na seleção
+        
+<h2>View</h2>
+A view é uma representação virtual dos dados em uma ou mais tabelas, e seu conteúdo é gerado dinamicamente toda vez que é consultada. A diferença principal entre uma view e uma view materializada é que a view é uma consulta armazenada no banco de dados, enquanto que a view materializada é uma cópia física dos dados resultantes da consulta armazenada no disco. Isso significa que ao consultar uma view, o banco de dados executa a consulta em tempo real, o que pode ser lento se a consulta envolver muitas tabelas e operações complexas. Já com uma view materializada, a consulta é executada apenas uma vez e os resultados são armazenados em uma tabela separada no banco de dados. 
 
+       CREATE VIEW vw_notas_alunos AS
+       
+       CREATE MATERIALIZED VIEW mvw_notas_alunos AS
+       
+       REFRESH MATERIALIZED VIEW mvw_notas_alunos - para atualizar uma view materialized
+       
 # Comandos utilizados nas listas de exercícios
 1. Limit;
 2. Order by;
